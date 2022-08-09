@@ -31,7 +31,11 @@
         <tr>
             <td><%= item.dateTime %></td>
             <td><%= item.amountFor %></td>
-            <td><%= item.amount %></td>
+            <td><%= item.amount %>
+            <form style="text-align:right;" action="/delete" method="post">
+                <button type="submit" name="deleteItem" value="<%=item._id%>" >Remove</button>
+            </form>
+            </td>
         </tr>
        <%  });  %>
        <tr>

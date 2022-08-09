@@ -61,6 +61,17 @@ app.post("/", function (req, res) {
 // console.log(today.getHours());
 // console.log(today.getMinutes());
 // console.log(today.getSeconds());
+app.post("/delete", function(req,res){
+    const deletedItem = req.body.deleteItem ;
+    List.deleteOne({_id:deletedItem},function(err){
+        if(err){
+            console.log(err)
+        }else{
+            res.redirect("/");
+        }
+    })
+})
+
 
 
 

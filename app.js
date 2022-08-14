@@ -13,19 +13,6 @@ app.use(express.static("public"));
 // mongoose connections
 mongoose.connect("mongodb://localhost:27017/moneyDB", { useNewUrlParser: true });
 
-// const allUserSchema = new mongoose.Schema({
-//     fname : String,
-//     lname: String,
-//     email: String,
-//     password: String
-// })
-
-// const individualSchema = new mongoose.Schema({
-//     month: String,
-//     dateTime: String,
-//     amountFor: String,
-//     amount: Number
-// });
 const moneySchema = new mongoose.Schema({
     fname : String,
     lname: String,
@@ -33,20 +20,11 @@ const moneySchema = new mongoose.Schema({
     password: String,
     moneyTrack: Array
 });
+
 const List = new mongoose.model("List", moneySchema);
+
 app.get("/", function (req, res) {
     res.render("home")
-    // List.find(function (err, lists) {
-    //     if (err) { 
-    //         console.log(err)
-    //     }else{
-    //         let sum = 0;
-    //         lists.forEach(function(item){
-    //             sum = sum + item.amount ;
-    //         })
-    //         res.render("home", {moneyHisab:lists, sumTotal:sum});
-    //     }
-    // })
 })
 
 app.get("/login",function(req,res){
@@ -55,7 +33,22 @@ app.get("/login",function(req,res){
 app.get("/registration",function(req,res){
     res.render("registration");
 });
-
+app.get("/individual/:id", function(req,res){
+    userId = req.params.id;
+    List.findOne({_id:userId},function(err,foundUser){
+        if(err){
+            console.log(err)
+        }else{
+            if(foundUser){
+                let sum = 0 ;
+                foundUser.moneyTrack.forEach(function(item){
+                sum = sum + parseInt(item.amount) ;
+                });
+                res.render("individual", {user:foundUser, sumTotal:sum});
+            }
+        }
+    })
+});
 app.post("/registration", function (req, res) {
     const newList = new List({
         fname : req.body.fname,
@@ -63,18 +56,25 @@ app.post("/registration", function (req, res) {
         email: req.body.email,
         password: req.body.confirmpsw
     });
-    newList.save();
-    res.redirect("/login");
+    newList.save(function(err){
+        if(err){
+            console.log(err)
+        }else{
+            res.redirect("/login");
+        }
+    });
 });
 app.post("/login",function(req,res){
-    List.findOne({email:req.body.email},function(err,foundUser){
+    const userEmail = req.body.email ;
+    List.findOne({email:userEmail},function(err,foundUser){
         if(err){
             console.log(err)
         }else{
             if(!foundUser){
                 res.send("This user does not exists")
             }else{
-                res.render("individual",{user:foundUser})
+                const userId = foundUser._id ;
+                res.redirect(`/individual/${userId}`);
             }
         }
     })
@@ -104,23 +104,19 @@ app.post("/userDataSave", function(req,res){
                 amount: req.body.amount
             }
             foundUserIndividual.moneyTrack.push(userInputData);
-            foundUserIndividual.save();
-            // find and render individual page data
-            List.findOne({_id:requestedID},function(err,found_user){
+            foundUserIndividual.save(function(err,savedUser){
                 if(err){
                     console.log(err)
                 }else{
-                    if(!found_user){
-                        res.send("This user does not exists")
-                    }else{
-                        res.render("individual",{user:found_user})
+                    if(savedUser){
+                        res.redirect(`/individual/${requestedID}`);
                     }
                 }
             });
         }
        }
     })
-})
+});
 app.post("/delete", function(req,res){
     const ItemID = req.body.ItemID.trim() ;
     const deletedItemIndex = req.body.deleteItemIndex ;
@@ -130,41 +126,26 @@ app.post("/delete", function(req,res){
         }else{
              if(foundItem){
                 const itemData = foundItem ;
-                itemData.moneyTrack.splice(deletedItemIndex)
-                itemData.save()
-                // find and render individual page data
-                List.findOne({_id:ItemID},function(err,foundUser){
+
+                itemData.moneyTrack.splice(deletedItemIndex,1);
+                itemData.save(function(err,savedUserData){
                     if(err){
-                        console.log(err)
+                        console.log(err);
                     }else{
-                        if(!foundUser){
-                            res.send("This user does not exists")
-                        }else{
-                            res.render("individual",{user:foundUser})
+                        if(savedUserData){
+                            res.redirect(`/individual/${ItemID}`);
                         }
                     }
                 });
              }
         }
     });
-    // List.deleteOne({_id:deletedItemID},function(err){
-    //     if(err){
-    //         console.log(err)
-    //     }else{
-    //         res.redirect("/");
-    //     }
-    // })
-})
+});
 
 
 
 
-// console.log(today);
-// console.log(months[today.getMonth()]);
-// console.log(today.getDate());
-// console.log(today.getHours());
-// console.log(today.getMinutes());
-// console.log(today.getSeconds());
+
 app.listen(3000, function () {
     console.log("Server started at 3000 port for money tracking");
 })

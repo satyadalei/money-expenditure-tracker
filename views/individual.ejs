@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Money tracker Individual Page</title>
-    <link rel="stylesheet" href="css/home.css">
+    <link rel="stylesheet" href="/css/home.css">
 </head>
 <body>
     <h1>Hello <%= user.fname %>  </h1>
@@ -23,7 +23,7 @@
         <input type="submit" value=" + Add">
     </form>
 <br>
-    <table id="customers"  >
+    <table id="customers">
         <tr>
             <th>Date & Time</th>
             <th>Menu Item</th>
@@ -44,7 +44,7 @@
        <tr>
             <td></td>
             <td style="text-align:right" >Total Expenditure</td>
-            <td>  sumTotal  </td>
+            <td style="color:red;font-weight: bolder;" > <%= sumTotal %> </td>
        </tr>
     </table>
 

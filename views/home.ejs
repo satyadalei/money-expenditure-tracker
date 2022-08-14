@@ -5,45 +5,12 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Money tracker Home</title>
-    <link rel="stylesheet" href="home.css">
 </head>
 <body>
-    <h1>Money Expenditure Record</h1>
-    <p>Add every lists of money expenditure</p>
-    
-    <form action="/" method="post">
-        <label for="Amount for">Amount for</label>
-        <input type="text" name="amountfor" id="" placeholder="Pizza" autocomplete="off" required >
-        <br> <br>
-        <label for="Money Amount in INR">Money Amount in INR</label>
-        <input type="number" name="amount" id="" placeholder="65" autocomplete="off" required >
-        <br>
-        <input type="submit" value=" + Add">
-    </form>
-<br>
-    <table id="customers"  >
-        <tr>
-            <th>Date & Time</th>
-            <th>Menu Item</th>
-            <th>Amount</th>
-          </tr>
-       <% moneyHisab.forEach(function(item){  %>
-        <tr>
-            <td><%= item.dateTime %></td>
-            <td><%= item.amountFor %></td>
-            <td><%= item.amount %>
-            <form style="text-align:right;" action="/delete" method="post">
-                <button type="submit" name="deleteItem" value="<%=item._id%>" >Remove</button>
-            </form>
-            </td>
-        </tr>
-       <%  });  %>
-       <tr>
-            <td></td>
-            <td style="text-align:right" >Total Expenditure</td>
-            <td> <%= sumTotal %>  </td>
-       </tr>
-    </table>
-
+     <h1>Hello there here you can save your money expenditure everytime</h1>
+     <div class="login_signin">
+        <a href="/login">Login</a> <br>
+        <a href="/registration">Register</a>
+     </div>
 </body>
 </html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Money tracker Individual Page</title>
+    <link rel="stylesheet" href="css/home.css">
+</head>
+<body>
+    <h1>Hello <%= user.fname %>  </h1>
+    <h1>Money Expenditure Record</h1>
+    <p>Add every lists of money expenditure</p>
+    
+    <form action="/userDataSave" method="post">
+        <label for="Amount for">Amount for</label>
+        <input type="text" name="amountfor" id="" placeholder="Pizza" autocomplete="off" required >
+        <br> <br>
+        <label for="Money Amount in INR">Money Amount in INR</label>
+        <input type="number" name="amount" id="" placeholder="65" autocomplete="off" required >
+        <br>
+        <input type="hidden" name="user_id" value="<%= user._id %> ">
+        <input type="submit" value=" + Add">
+    </form>
+<br>
+    <table id="customers"  >
+        <tr>
+            <th>Date & Time</th>
+            <th>Menu Item</th>
+            <th>Amount</th>
+          </tr>
+       <% user.moneyTrack.forEach(function(item, itemIndex){  %>
+        <tr>
+            <td><%= item.dateTime %></td>
+            <td><%= item.amountFor %></td>
+            <td><%= item.amount %>
+            <form style="text-align:right;" action="/delete" method="post">
+                <input type="hidden" name="ItemID" value="<%= user._id %> ">
+                <button type="submit" name="deleteItemIndex" value="<%= itemIndex %>" >Remove</button>
+            </form>
+            </td>
+        </tr>
+       <%  });  %>
+       <tr>
+            <td></td>
+            <td style="text-align:right" >Total Expenditure</td>
+            <td>  sumTotal  </td>
+       </tr>
+    </table>
+
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="css/Login.css">
+<style>
+
+</style>
+</head>
+<body>
+
+<h2>Login Form</h2>
+
+<form action="/login" method="post">
+  <div class="container">
+    <label for="uname"><b>Email</b></label>
+    <input type="email" placeholder="Enter Email" name="email" required autocomplete="off" >
+
+    <label for="psw"><b>Password</b></label>
+    <input type="password" placeholder="Enter Password" name="psw" required autocomplete="off" >
+        
+    <button type="submit">Login</button>
+    
+  </div>
+
+  <div class="container new_user" style="background-color:#f1f1f1">
+  <a class="registration_link" href="/registration"> <button type="button" class="cancelbtn">New user?Create Account</a></button></a>
+    <!-- <span class="psw">Forgot <a href="#">password?</a></span> -->
+  </div>
+</form>
+
+</body>
+</html>

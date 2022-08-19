@@ -11,7 +11,7 @@ const saltRounds = 10;
 
 // mongoose connections
 const mongodb_url = process.env.MONGO_DB_URL;
-const mongodbOptions = { useNewUrlParser: true }
+const mongodbOptions = { useNewUrlParser: true };
 mongoose.connect(mongodb_url, mongodbOptions).then(function(){
     console.log("MongoDB database is connected successfully");
 });
@@ -28,10 +28,12 @@ app.use(session({
     store: mongoStore.create({
         mongoUrl: mongodb_url,
         collectionName: "myAllSession"
-    })
-}))
-
-
+    }),
+    cookie:{
+        maxAge: 1000*60*60*24*7 // 1 Week expairy date // 1000=1sec, 1000*60 = 1min , 1000*60*60 = 1hr ,1000*60*60*24*7 = 1 week  
+        // cookies will be stored for one week and then automatically deleted.
+    } 
+}));
 
 const moneySchema = new mongoose.Schema({
     fname : String,
@@ -43,6 +45,13 @@ const moneySchema = new mongoose.Schema({
 
 const List = new mongoose.model("List", moneySchema);
 
+// *****DONOT CHANGE  below***** these are messages and will be used for different condition 
+const regis_LinkUUrl = "/registration" ;
+const login = "/login" ;
+const combinedUrl = "<a href="+regis_LinkUUrl +"> Registration </a>"+ "Or" +
+                    "<a href="+ login +"> Login </a>" ;
+//*****DONOT CHANGE above*****
+
 app.get("/", function (req, res) {
     res.render("home")
 })
@@ -53,9 +62,9 @@ app.get("/login",function(req,res){
 app.get("/registration",function(req,res){
     res.render("registration");
 });
-app.get("/individual/:id", function(req,res){
+app.get("/user", function(req,res){
     if(req.session.isAuth === true){
-    userId = req.params.id;
+    const userId = req.session.user_ID;
     List.findOne({_id:userId},function(err,foundUser){
         if(err){
             console.log(err)
@@ -66,10 +75,9 @@ app.get("/individual/:id", function(req,res){
                 sum = sum + parseInt(item.amount) ;
                 });
                 res.render("individual", {user:foundUser, sumTotal:sum});
-                console.log(req.session.user_ID);
             }
         }
-    })               
+    });              
     }else{
         res.redirect("/login");
     }
@@ -86,13 +94,9 @@ app.post("/registration", function (req, res) {
             if(foundUser){
                 // this will send client a message that same mail id already exists and provide link to login or signin
                 const messageString = "<h1>This user with same mail_ID already exists. Please try another one.</h1>" ;
-                const regis_LinkUUrl = "/registration" ;
-                const login = "/login" ;
-                const combinedUrl = "<a href="+regis_LinkUUrl +"> Registration </a>"+ "Or" +
-                                    "<a href="+ login +"> Login </a>"
                 res.send(messageString + combinedUrl);
             }else{
-                bcrypt.hash(userPassword, saltRounds,async function(err,hashedPassword){
+                bcrypt.hash(userPassword, saltRounds, function(err,hashedPassword){
                     if(err){console.log(err)}else{
                         newList = new List({
                             fname : userFname,
@@ -100,20 +104,20 @@ app.post("/registration", function (req, res) {
                             email: userEmail,
                             password: hashedPassword
                         });
-                        await newList.save(function(err,savedUser){
+                        newList.save(function(err,savedUser){
                             if(err){
                                 console.log(err)
                             }else{
+                                req.session.user_ID = savedUser._id;
                                 req.session.isAuth = true ;
-                                res.redirect(`/individual/${savedUser._id}`);
+                                res.redirect("/user");
                             }
                         });
                     }
                 })
             }
         }
-    });
-    
+    });  
 });
 app.post("/login",function(req,res){
     const userEmail = req.body.email ;
@@ -124,10 +128,6 @@ app.post("/login",function(req,res){
         }else{
             if(!foundUser){
                 const messageString = "<h1>This user does not exists</h1>" ;
-                const regis_LinkUUrl = "/registration" ;
-                const login = "/login" ;
-                const combinedUrl = "<a href="+regis_LinkUUrl +"> Registration </a>"+ "Or" +
-                                    "<a href="+ login +"> Login </a>"
                 res.send(messageString + combinedUrl);
             }else{
                 bcrypt.compare(userPassword, foundUser.password , function(err, passwordConfirmed) {
@@ -135,14 +135,16 @@ app.post("/login",function(req,res){
                         if(passwordConfirmed === true){
                             req.session.isAuth = true ;
                             req.session.user_ID = foundUser._id ;
-                            const userId = foundUser._id ;
-                            res.redirect(`/individual/${userId}`);
+                            res.redirect("/user");
+                        }else{
+                            const messageString = "<h1>You have enterd the wrong password" ;
+                            res.send(messageString + combinedUrl);
                         }
                     }
                 });
             }
         }
-    })
+    });
 });
 app.post("/userDataSave", function(req,res){
     const requestedID = req.body.user_id.trim() ;
@@ -150,68 +152,79 @@ app.post("/userDataSave", function(req,res){
     let today = new Date();
     let hour;
     let timeNow;
-    if (today.getHours() > 12) {
+    if(today.getHours() > 12){
         hour = today.getHours() - 12
         timeNow = months[today.getMonth()] + " " + today.getDate() +", " + hour + ":" + today.getMinutes() + " PM";
-    } else {
+    }else{
         hour = today.getHours();
         timeNow = months[today.getMonth()] + " " + today.getDate() + ", " + hour + ":" + today.getMinutes() + " AM";
-    }
-    List.findOne({_id:requestedID},function(err, foundUser){
-       if(err){
-        console.log(err);
-       }else{
-        if(foundUser){
-            const foundUserIndividual = foundUser;
-            const userInputData = {
-                dateTime: timeNow ,
-                amountFor: req.body.amountfor,
-                amount: req.body.amount
+    };
+    if(req.session.isAuth === true){
+        List.findOne({_id:requestedID}, async function(err, foundUser){
+            if(err){
+             console.log(err);
+            }else{
+             if(foundUser){
+                 const foundUserIndividual = foundUser;
+                 const userInputData = {
+                     dateTime: timeNow ,
+                     amountFor: req.body.amountfor,
+                     amount: req.body.amount
+                 }
+                 await foundUserIndividual.moneyTrack.push(userInputData);
+                 foundUserIndividual.save(function(err,savedUser){
+                     if(err){
+                         console.log(err)
+                     }else{
+                         if(savedUser){
+                             res.redirect("/user");
+                         }
+                     }
+                 });
+             }
             }
-            foundUserIndividual.moneyTrack.push(userInputData);
-            foundUserIndividual.save(function(err,savedUser){
-                if(err){
-                    console.log(err)
-                }else{
-                    if(savedUser){
-                        res.redirect(`/individual/${requestedID}`);
-                    }
-                }
-            });
-        }
-       }
-    })
+         });
+    }else{
+        res.redirect("/login");
+    }
 });
 app.post("/delete", function(req,res){
     const ItemID = req.body.ItemID.trim() ;
     const deletedItemIndex = req.body.deleteItemIndex ;
-    List.findOne({_id:ItemID},function(err,foundItem){
-        if(err){
-            console.log(err)
-        }else{
-             if(foundItem){
-                const itemData = foundItem ;
-
-                itemData.moneyTrack.splice(deletedItemIndex,1);
-                itemData.save(function(err,savedUserData){
-                    if(err){
-                        console.log(err);
-                    }else{
-                        if(savedUserData){
-                            res.redirect(`/individual/${ItemID}`);
+    if(req.session.isAuth === true){
+        List.findOne({_id:ItemID}, async function(err,foundItem){
+            if(err){
+                console.log(err)
+            }else{
+                if(foundItem){
+                    const itemData = foundItem ;
+                    await itemData.moneyTrack.splice(deletedItemIndex,1);
+                    itemData.save(function(err,savedUserData){
+                        if(err){
+                            console.log(err);
+                        }else{
+                            if(savedUserData){
+                                res.redirect("/user");
+                            }
                         }
-                    }
-                });
-             }
-        }
-    });
+                    });
+                }
+            }
+        });
+    }else{
+        res.redirect("/login");
+    }
 });
 app.post("/logout", function(req,res){
-    req.session.destroy(function(err){
-       if(err){console.log(err)}else{
-        res.redirect("/");
-       }
-    })
+    if(req.session.isAuth === true){
+        req.session.destroy(function(err){
+            if(err){console.log(err)}else{
+             res.redirect("/");
+            }
+         });
+    }else{
+        res.redirect("/login");
+    }
 });
 
 

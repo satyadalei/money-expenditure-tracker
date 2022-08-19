@@ -8,28 +8,20 @@
     <link rel="stylesheet" href="/css/home.css">
 </head>
 <body>
-    <h1>Hello <%= user.fname %>  </h1>
+    <h1>Hello <span class="user_name"><%= user.fname %> </span></h1>
     <h1>Money Expenditure Record</h1>
     <p>Add every lists of money expenditure</p>
     
     <form action="/userDataSave" method="post">
         <label for="Amount for">Amount for</label>
-        <input type="text" name="amountfor" id="" placeholder="Pizza" autocomplete="off" required >
+        <input type="text" name="amountfor" id="" placeholder="Ex: Pizza" autocomplete="off" required >
         <br> <br>
         <label for="Money Amount in INR">Money Amount in INR</label>
-        <input type="number" name="amount" id="" placeholder="65" autocomplete="off" required >
-        <br>
+        <input type="number" name="amount"  placeholder="Ex: 65" autocomplete="off" required >
         <input type="hidden" name="user_id" value="<%= user._id %> ">
         <input type="submit" value=" + Add">
     </form>
 <br>
-    <div class="logout">
-        <form action="/logout" method="post">
-            <button type="submit">
-                Log Out
-            </button>
-        </form>
-    </div>
     <table id="customers">
         <tr>
             <th>Date & Time</th>
@@ -54,6 +46,14 @@
             <td style="color:red;font-weight: bolder;" > <%= sumTotal %> </td>
        </tr>
     </table>
-
+    <br>
+<p class="logout_notice">You will be automatically loged out if you do not use for one week.</p>
+    <div class="logout">
+        <form action="/logout" method="post">
+            <button type="submit">
+                Log Out
+            </button>
+        </form>
+    </div>
 </body>
 </html>

@@ -1,0 +1,118 @@
+#customers {
+    font-family: Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+  }
+  
+  #customers td, #customers th {
+    /* border: 1px solid #ddd; */
+    padding: 8px;
+  }
+  
+  #customers tr:nth-child(even){background-color: #f2f2f2;}
+  
+  #customers tr:hover {background-color: #ddd;}
+  
+  #customers th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #04AA6D;
+    color: white;
+  }
+  .indi_welcome_message h1{
+  font-size: 2rem;
+  }
+  .logout_box{
+    margin-top: 20px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+  }
+  .logout_notice{
+    display: inline-block;
+  }
+  .logout{
+    width: max-content;
+    margin: 0 auto;
+    border: 2px solid red;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .logout button{
+    outline: none;
+    border: none;
+    font-size: 1rem;
+    padding: 5px;
+    background-color: white;
+    color: red;
+    font-weight: bolder;
+    cursor: pointer;
+  }
+  .user_name{
+    font-family: sans-serif;
+    color: blue;
+  }
+  .indi_welcome_message input{
+    outline: auto;
+    padding: 5px;
+  }
+  .indi_welcome_message .money{
+    margin-right: 20px;
+  }
+  .indi_welcome_message .amount_for{
+    margin-bottom: 20px;
+    margin-top: 20px;
+  }
+  .indi_welcome_message .money-add-both{
+    display: flex;
+    align-items: center;
+  }
+  .indi_welcome_message .add input{
+    background-color: rgb(4,170,109);
+    color: white;
+  }
+  .logout_container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .logout_notice{
+    text-align: center;
+    color: rgb(189, 188, 188);
+    font-style: italic;
+    font-family: sans-serif;
+  }
+.delete-form button{
+   outline: none;
+   border: none;
+}
+.delete-form button #delete-btn{
+    background-color: yellow;
+}
+.delete-form button i{
+    color: red;
+    font-weight: bold;
+}
+.star{
+    color: red;
+}
+/* after header page */
+/* ######## welcome_message ################## welcome_message ################## welcome_message ########## */
+.indi_welcome_message{
+  padding: 0 3rem 20px 3rem;
+}
+.indi_table{
+    padding:0 3rem 0 3rem ;
+}
+/* *****footer**********footer**********footer**********footer**********footer**********footer***** */
+.footer{
+    background-color:rgb(99,102,241) ;
+}
+.footer-text-color{
+    color: white;
+}
+.footer-highlight{
+    color: rgb(241, 241, 241);
+}

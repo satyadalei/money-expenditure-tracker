@@ -8,13 +8,15 @@ const session = require("express-session");
 const mongoStore = require("connect-mongo");
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
+const _ = require("lodash");
 
 // mongoose connections
 const mongodb_url = process.env.MONGO_DB_URL;
 const mongodbOptions = { useNewUrlParser: true };
-mongoose.connect(mongodb_url, mongodbOptions).then(function(){
-    console.log("MongoDB database is connected successfully");
-});
+mongoose.connect(mongodb_url, mongodbOptions)
+// .then(function(){
+//     console.log("MongoDB database is connected successfully");
+// });
 
 // use and settings of modules
 const app = express();
@@ -53,7 +55,22 @@ const combinedUrl = "<a href="+regis_LinkUUrl +"> Registration </a>"+ "Or" +
 //*****DONOT CHANGE above*****
 
 app.get("/", function (req, res) {
-    res.render("home")
+    if(req.session.isAuth === true){
+        List.findOne({_id:req.session.user_ID},function(err,foundUser){
+            if(err){
+                console.log(err)
+            }
+            else{
+                if(foundUser){
+                    res.redirect(`/${_.lowerCase(foundUser.fname)}`);
+                }else{
+                    res.render("home");
+                }
+            }
+        })
+    }else{
+        res.render("home");
+    }
 })
 
 app.get("/login",function(req,res){
@@ -62,7 +79,7 @@ app.get("/login",function(req,res){
 app.get("/registration",function(req,res){
     res.render("registration");
 });
-app.get("/user", function(req,res){
+app.get("/:user", function(req,res){
     if(req.session.isAuth === true){
     const userId = req.session.user_ID;
     List.findOne({_id:userId},function(err,foundUser){
@@ -70,9 +87,11 @@ app.get("/user", function(req,res){
             console.log(err)
         }else{
             if(foundUser){
+                //const found_User = JSON.parse(foundUser) ;
                 let sum = 0 ;
                 foundUser.moneyTrack.forEach(function(item){
-                sum = sum + parseInt(item.amount) ;
+                sum = sum + parseFloat(item.amount, 2);
+                // parseInt(item.amount)
                 });
                 res.render("individual", {user:foundUser, sumTotal:sum});
             }
@@ -83,8 +102,8 @@ app.get("/user", function(req,res){
     }
 });
 app.post("/registration", function (req, res) {
-    const userFname = req.body.fname ;
-    const userLname = req.body.lname ;
+    const userFname = _.capitalize(req.body.fname)  ;
+    const userLname = _.capitalize(req.body.lname) ;
     const userEmail = req.body.email ;
     const userPassword =  req.body.confirmpsw ;
     List.findOne({email:userEmail},function(err,foundUser){
@@ -110,7 +129,7 @@ app.post("/registration", function (req, res) {
                             }else{
                                 req.session.user_ID = savedUser._id;
                                 req.session.isAuth = true ;
-                                res.redirect("/user");
+                                res.redirect(`/${_.lowerCase(savedUser.fname)}`);
                             }
                         });
                     }
@@ -135,7 +154,7 @@ app.post("/login",function(req,res){
                         if(passwordConfirmed === true){
                             req.session.isAuth = true ;
                             req.session.user_ID = foundUser._id ;
-                            res.redirect("/user");
+                            res.redirect(`/${_.lowerCase(foundUser.fname)}`);
                         }else{
                             const messageString = "<h1>You have enterd the wrong password" ;
                             res.send(messageString + combinedUrl);
@@ -148,7 +167,7 @@ app.post("/login",function(req,res){
 });
 app.post("/userDataSave", function(req,res){
     const requestedID = req.body.user_id.trim() ;
-    const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    const months = ["Jan", "Feb", "March", "April", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Decr"];
     let today = new Date();
     let hour;
     let timeNow;
@@ -177,7 +196,7 @@ app.post("/userDataSave", function(req,res){
                          console.log(err)
                      }else{
                          if(savedUser){
-                             res.redirect("/user");
+                             res.redirect(`/${_.lowerCase(savedUser.fname)}`);
                          }
                      }
                  });
@@ -204,7 +223,7 @@ app.post("/delete", function(req,res){
                             console.log(err);
                         }else{
                             if(savedUserData){
-                                res.redirect("/user");
+                                res.redirect(`/${_.lowerCase(savedUserData.fname)}`);
                             }
                         }
                     });

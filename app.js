@@ -112,7 +112,7 @@ app.post("/registration", function (req, res) {
         }else{
             if(foundUser){
                 // this will send client a message that same mail id already exists and provide link to login or signin
-                const messageString = "<h1>This user with same mail_ID already exists. Please try another one.</h1>" ;
+                const messageString = "<h1>This user with same mail_ID already exists. Please try another one.</h1><br>" ;
                 res.send(messageString + combinedUrl);
             }else{
                 bcrypt.hash(userPassword, saltRounds, function(err,hashedPassword){
@@ -156,7 +156,7 @@ app.post("/login",function(req,res){
                             req.session.user_ID = foundUser._id ;
                             res.redirect(`/${_.lowerCase(foundUser.fname)}`);
                         }else{
-                            const messageString = "<h1>You have enterd the wrong password" ;
+                            const messageString = "<h1>You have enterd the wrong password!</h1><br>" ;
                             res.send(messageString + combinedUrl);
                         }
                     }

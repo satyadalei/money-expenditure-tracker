@@ -11,9 +11,13 @@ const saltRounds = 10;
 const _ = require("lodash");
 
 // mongoose connections
+// const mongodb_url = process.env.MONGO_DB_URL;
 const mongodb_url = process.env.MONGO_DB_URL;
 const mongodbOptions = { useNewUrlParser: true };
-mongoose.connect(mongodb_url, mongodbOptions)
+mongoose.connect(mongodb_url, mongodbOptions);
+//>>>> mongodb+srv://admin-satya:<password>@logincluster.ekgvyog.mongodb.net/?retryWrites=true&w=majority
+//const user = "mongodb+srv://"+process.env.mongoUser+":"+process.env.mongoUserPass+"@"+process.env.mongoProjectName+".ekgvyog.mongodb.net/" + process.env.mongodbName
+//expenceTrackerDB
 // .then(function(){
 //     console.log("MongoDB database is connected successfully");
 // });
@@ -29,7 +33,7 @@ app.use(session({
     saveUninitialized:false,
     store: mongoStore.create({
         mongoUrl: mongodb_url,
-        collectionName: "myAllSession"
+        collectionName: "Session"
     }),
     cookie:{
         maxAge: 1000*60*60*24*7 // 1 Week expairy date // 1000=1sec, 1000*60 = 1min , 1000*60*60 = 1hr ,1000*60*60*24*7 = 1 week  
@@ -47,12 +51,12 @@ const moneySchema = new mongoose.Schema({
 
 const List = new mongoose.model("List", moneySchema);
 
-// *****DONOT CHANGE  below***** these are messages and will be used for different condition 
+// *****DONOT CHANGE  below***** these are messages and will be used for different condition with same 
 const regis_LinkUUrl = "/registration" ;
 const login = "/login" ;
 const combinedUrl = "<a href="+regis_LinkUUrl +"> Registration </a>"+ "Or" +
                     "<a href="+ login +"> Login </a>" ;
-//*****DONOT CHANGE above*****
+//*****DONOT CHANGE above*****these are messages and will be used for different condition with same 
 
 app.get("/", function (req, res) {
     if(req.session.isAuth === true){
@@ -246,9 +250,12 @@ app.post("/logout", function(req,res){
     }
 });
 
+let port = process.env.PORT ;
+if(port == null || port == ""){
+    port = 3000
+}
 
 
-
-app.listen(3000, function () {
+app.listen(port, function () {
     console.log("Server started at 3000 port for money tracking");
 });

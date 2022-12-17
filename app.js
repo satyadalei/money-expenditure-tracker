@@ -43,7 +43,7 @@ app.use(session({
 
 const moneySchema = new mongoose.Schema({
     fname : String,
-    lname: String,
+    // lname: String,
     email: String,
     password: String,
     moneyTrack: Array
@@ -107,7 +107,7 @@ app.get("/:user", function(req,res){
 });
 app.post("/registration", function (req, res) {
     const userFname = _.capitalize(req.body.fname)  ;
-    const userLname = _.capitalize(req.body.lname) ;
+    // const userLname = _.capitalize(req.body.lname) ;
     const userEmail = req.body.email ;
     const userPassword =  req.body.confirmpsw ;
     List.findOne({email:userEmail},function(err,foundUser){
@@ -123,7 +123,7 @@ app.post("/registration", function (req, res) {
                     if(err){console.log(err)}else{
                         newList = new List({
                             fname : userFname,
-                            lname: userLname,
+                            // lname: userLname,
                             email: userEmail,
                             password: hashedPassword
                         });

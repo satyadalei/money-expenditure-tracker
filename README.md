@@ -31,7 +31,7 @@ It's live visit 👉
 - Account create
 - User (Cookie based) authentication 
 - CRUD operation
-- Login Logout
+- Login & Logout
 
 
 ## Run Locally
@@ -52,4 +52,15 @@ Install dependencies
 
 ```bash
   npm install
+```
+
+Start the server
+
+```bash
+  nodemon app.js
+```
+Open browser and type url
+
+```bash
+  http://localhost:3000
 ```

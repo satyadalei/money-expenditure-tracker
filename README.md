@@ -21,7 +21,7 @@ This web app helps you track your daily expences. Everytime you spend something,
 
 ## Folder structure
 
-![Folder structure image](https://github.com/satyadalei/money-expenditure-tracker/blob/master/public/images/folder_structure)
+![Folder structure image](https://github.com/satyadalei/money-expenditure-tracker/blob/master/public/images/folder_structure.png)
 
 
 ## Features

@@ -32,3 +32,24 @@ It's live visit 👉
 - User (Cookie based) authentication 
 - CRUD operation
 - Login Logout
+
+
+## Run Locally
+
+Clone the project
+
+```bash
+  git clone https://github.com/satyadalei/money-expenditure-tracker.git
+```
+
+Go to the project directory
+
+```bash
+  cd money-expenditure-tracker
+```
+
+Install dependencies
+
+```bash
+  npm install
+```

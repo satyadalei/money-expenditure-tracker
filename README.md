@@ -4,6 +4,6 @@ This web app helps you track your daily expences. Everytime you spend something,
 
 ## Demo
 
-![](https://github.com/satyadalei/money-expenditure-tracker/blob/master/public/gifs/money%20expenditure%20tracker.gif)
+![Demo Image](https://github.com/satyadalei/money-expenditure-tracker/blob/master/public/gifs/money%20expenditure%20tracker.gif)
 
 <img src="https://github.com/satyadalei/money-expenditure-tracker/blob/master/public/gifs/money%20expenditure%20tracker.gif"/>
